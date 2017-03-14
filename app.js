@@ -55,75 +55,7 @@ var BluetoothScanner = module.exports = function (option, callback) {
                         console.log("hcitool cc: started..." + ['cc', macAddr]);
                         console.log("连接设备:" + macAddr);
                         hciToolcc.stdout.on('data', function (data) {
-                            if (data.length) {
-                                end_time = new Date();
-                                //console.log("连接成功!");
-                                console.log("设备名称:" + option['name'] + "|mac:" + option['mac'] + "|RSSI:" + RSSI);
-                                connect_time = (end_time.getTime() - begin_time.getTime());
-                                console.log('\t' + "连接时间:" + connect_time + "ms");
-                                //data = data.toString('utf-8');
-                                var dcEndtime = new Date();
-                                //断开操作
-                                var hciTooldc = spawn('hcitool', ['dc', macAddr]);
-                                console.log("hcitooldc state:" + code);
-                                hciTooldc.on('exit', function (code) {
-                                    disconnect_time = (new Date().getTime() - dcEndtime);
-                                    //console.log("断开成功!");
-                                    console.log('\t' + "断开时间:" + disconnect_time + "ms");
-
-                                    if (code !== 0) {
-                                        console.log("cc succeed dc failed!");
-                                        //写入统计库
-                                        args = {
-                                            "mac": macAddr,
-                                            "flag": flag,
-                                            "mi": mi,
-                                            "mobile": mobile,
-                                            "name": devicename,
-                                            "inc": {
-                                                "dc_failed": 1,
-                                                "cc": 1
-                                            }
-                                        };
-                                        dbtool.updateStatisticsdb(args);
-                                    } else {
-                                        console.log("cc succeed dc succeed!");
-                                        //写入统计库
-                                        args = {
-                                            "mac": macAddr,
-                                            "flag": flag,
-                                            "mi": mi,
-                                            "mobile": mobile,
-                                            "name": devicename,
-                                            "inc": {
-                                                "dc_success": 1,
-                                                "cc": 1
-                                            }
-                                        };
-                                        dbtool.updateStatisticsdb(args);
-                                    }
-
-                                    args = {
-                                        "mac": macAddr,
-                                        "ConnectionTime": connect_time,
-                                        "DisconnectTime": disconnect_time,
-                                        "flag": flag,
-                                        "name": devicename,
-                                        "mi": mi,
-                                        "time": record_time,
-                                        "mobile": mobile,
-                                        "RSSI": RSSI,
-                                        "isConnect": 1
-                                    };
-                                    dbtool.insertdb(args);
-                                });
-                                //返回成功结果
-                                callback({
-                                    "result": 1,
-                                    "value": "成功！连接时间：" + connect_time + "ms！"
-                                });
-
-                            }
+                            console.log("data:"+data)
                         });
 
                         hciToolcc.on("exit", function (code) {
@@ -177,14 +109,78 @@ var BluetoothScanner = module.exports = function (option, callback) {
                                     "mi": mi,
                                     "time": record_time,
                                     "mobile": mobile,
-                                    "RSSI": RSSI,
                                     "isConnect": 0
                                 };
                                 dbtool.insertdb(args);
                             }
                             else {
+                                end_time = new Date();
+                                //console.log("连接成功!");
+                                console.log("设备名称:" + option['name'] + "|mac:" + option['mac']);
+                                connect_time = (end_time.getTime() - begin_time.getTime());
+                                console.log('\t' + "连接时间:" + connect_time + "ms");
+                                //data = data.toString('utf-8');
+                                var dcEndtime = new Date();
+                                //断开操作
+                                var hciTooldc = spawn('hcitool', ['dc', macAddr]);
+                                console.log("hcitooldc state:" + code);
+                                hciTooldc.on('exit', function (code) {
+                                    disconnect_time = (new Date().getTime() - dcEndtime);
+                                    //console.log("断开成功!");
+                                    console.log('\t' + "断开时间:" + disconnect_time + "ms");
+
+                                    if (code !== 0) {
+                                        console.log("cc succeed dc failed!");
+                                        //写入统计库
+                                        args = {
+                                            "mac": macAddr,
+                                            "flag": flag,
+                                            "mi": mi,
+                                            "mobile": mobile,
+                                            "name": devicename,
+                                            "inc": {
+                                                "dc_failed": 1,
+                                                "cc": 1
+                                            }
+                                        };
+                                        dbtool.updateStatisticsdb(args);
+                                    } else {
+                                        console.log("cc succeed dc succeed!");
+                                        //写入统计库
+                                        args = {
+                                            "mac": macAddr,
+                                            "flag": flag,
+                                            "mi": mi,
+                                            "mobile": mobile,
+                                            "name": devicename,
+                                            "inc": {
+                                                "dc_success": 1,
+                                                "cc": 1
+                                            }
+                                        };
+                                        dbtool.updateStatisticsdb(args);
+                                    }
+
+                                    args = {
+                                        "mac": macAddr,
+                                        "ConnectionTime": connect_time,
+                                        "DisconnectTime": disconnect_time,
+                                        "flag": flag,
+                                        "name": devicename,
+                                        "mi": mi,
+                                        "time": record_time,
+                                        "mobile": mobile,
+                                        "isConnect": 1
+                                    };
+                                    dbtool.insertdb(args);
+                                });
                                 console.log("连接成功!");
                                 console.log('\t' + "连接成功退出时间:" + (new Date().getTime() - begin_time) + "ms");
+                                //返回成功结果
+                                callback({
+                                    "result": 1,
+                                    "value": "成功！连接时间：" + connect_time + "ms！"
+                                });
                             }
 
                             var hciconfig = spawn('hciconfig', [hcidev, 'down']);
