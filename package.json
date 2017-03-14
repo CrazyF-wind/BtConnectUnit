@@ -1,0 +1,25 @@
+{
+  "name": "andon-bluetooth-connect-temp",
+  "version": "1.0.0",
+  "description": "Bluetooth 4.0 LE scanner to find near by Bluetooth devices.",
+  "main": "app.js",
+  "scripts": {
+    "test": "node tests/basic.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CrazyF-wind/node-bluetooth-connect-temp"
+  },
+  "keywords": [
+    "bluetooth",
+    "scanner"
+  ],
+  "author": {
+    "name": "fwind"
+  },
+  "dependencies": {
+    "mongodb": "2.1.20"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md"
+}
