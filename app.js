@@ -119,6 +119,26 @@ var BluetoothScanner = module.exports = function (option, callback) {
                                 console.log("设备名称:" + option['name'] + "|mac:" + option['mac']);
                                 connect_time = (end_time.getTime() - begin_time.getTime());
                                 console.log('\t' + "连接时间:" + connect_time + "ms");
+                                if(connect_time>5000)
+                                {
+                                    console.log("cc failed!timeout!");
+                                    //写入统计库
+                                    args = {
+                                        "mac": macAddr,
+                                        "flag": flag,
+                                        "mi": mi,
+                                        "mobile": mobile,
+                                        "name": devicename,
+                                        "inc": {
+                                            "cc": 0
+                                        }
+                                    };
+                                    dbtool.updateStatisticsdb(args);
+                                    callback({
+                                        "result": 0,
+                                        "value": "失败！连接超时！"
+                                    });
+                                }
                                 //data = data.toString('utf-8');
                                 var dcEndtime = new Date();
                                 //断开操作
