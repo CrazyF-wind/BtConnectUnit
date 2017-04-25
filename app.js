@@ -119,7 +119,7 @@ var BluetoothScanner = module.exports = function (option, callback) {
                                 console.log("设备名称:" + option['name'] + "|mac:" + option['mac']);
                                 connect_time = (end_time.getTime() - begin_time.getTime());
                                 console.log('\t' + "连接时间:" + connect_time + "ms");
-                                if(connect_time>5000)
+                                if(connect_time>10000)
                                 {
                                     console.log("cc failed!timeout!");
                                     //写入统计库
